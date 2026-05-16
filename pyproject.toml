@@ -1,0 +1,25 @@
+[project]
+name = "money-panel-api"
+version = "0.1.0"
+description = "A personal finance tracking API build with FastAPI and Clean Architecture."
+readme = "README.md"
+requires-python = ">3.11"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "pydantic>=2.5.3",
+    "pydantic-settings>=2.1.0",
+    "sqlalchemy>=2.0.25",
+    "alembic>=1.13.1",
+    "psycopg2-binary>=2.9.9",
+    "pyjwt>=2.12.1",
+    "sqlmodel>=0.0.38",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+
+[tool.fastapi]
+entrypoint = "app:app"
