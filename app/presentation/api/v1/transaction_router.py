@@ -5,9 +5,9 @@ from app.application.services.transaction_service import CreateTransactionUseCas
 from app.infraestructure.database import get_session
 from app.infraestructure.models.transaction import TransactionPublic, TransactionCreate
 
-router = APIRouter(prefix="/transactions/")
+router = APIRouter(prefix="/transactions")
 
-@router.post("", response_model=TransactionPublic)
+@router.post("/", response_model=TransactionPublic)
 def create_transaction(transaction: TransactionCreate, session=Depends(get_session)):
     # Instance of our infra SQLModel through a UOW
     uow = UnitOfWork(session)

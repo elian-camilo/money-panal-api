@@ -22,4 +22,4 @@ testpaths = ["tests"]
 
 
 [tool.fastapi]
-entrypoint = "app/main:app"
+entrypoint = "app.main:app"
