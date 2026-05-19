@@ -3,7 +3,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from .models.transaction import TransactionTable
 from .models.category import CategoryTable
 from .models.account import AccountTable
-# from .models.obligation import ObligationTable
+from .models.obligation import ObligationTable
 # from .models.debt import DebtTable
 
 sqlite_file_name = "database.db"
