@@ -13,7 +13,7 @@ from app.infraestructure.models.category import (
     CategoryCreate
 )
 
-router = APIRouter(prefix="/category")
+router = APIRouter(prefix="/categories")
 
 @router.post("/", response_model=CategoryPublic)
 def create_category(category: CategoryCreate, session=Depends(get_session)):

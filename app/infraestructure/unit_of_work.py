@@ -1,6 +1,7 @@
 from app.application.interfaces.unit_of_work import IUnitOfWork
 from app.infraestructure.repositories.sqlmodel_transaction_repository import SQLModelTransactionRepository
 from app.infraestructure.repositories.sqlmodel_category_repository import SQLModelCategoryRespository
+from app.infraestructure.repositories.sqlmodel_account_repository import SQLModelAccountRespository
 from sqlmodel import Session
 
 class UnitOfWork(IUnitOfWork):
@@ -9,6 +10,7 @@ class UnitOfWork(IUnitOfWork):
 
         self.transaction_repository = SQLModelTransactionRepository(self.session)
         self.category_repository = SQLModelCategoryRespository(self.session)
+        self.accout_repository = SQLModelAccountRespository(self.session)
 
     def __enter__(self):
         return self
