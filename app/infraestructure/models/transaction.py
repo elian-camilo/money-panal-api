@@ -11,8 +11,8 @@ class TransactionBase(SQLModel):
     amount: float = Field(gt=0)
     t_type: TransactionType = Field(default=TransactionType.EXPENSE) #"income" | "expense"
     description: str | None = Field(default=None, max_length=100)
-    caterogy_id: int | None = Field(default=None, foreign_key="category.id")
-    account_id: int | None = Field(default=None, foreign_key="account.id")
+    caterogy_id: int | None = Field(default=None, foreign_key="categorytable.id")
+    account_id: int | None = Field(default=None, foreign_key="accounttable.id")
 
 
 class TransactionTable(TransactionBase, table=True):
