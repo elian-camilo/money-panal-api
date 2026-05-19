@@ -7,7 +7,7 @@ class Transaction(BaseModel):
     id: int | None = None
     amount: float
     t_type: str
-    description: str
+    description: str | None = None
     date: datetime
-    caterogy_id: int
-    account_id: int
+    caterogy_id: int | None = None
+    account_id: int | None = None

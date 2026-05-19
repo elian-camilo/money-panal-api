@@ -10,9 +10,9 @@ class TransactionType(str, Enum):
 class TransactionBase(SQLModel):
     amount: float = Field(gt=0)
     t_type: TransactionType = Field(default=TransactionType.EXPENSE) #"income" | "expense"
-    description: str
-    caterogy_id: int
-    account_id: int
+    description: str | None = Field(default=None, max_length=100)
+    caterogy_id: int | None = Field(default=None, foreign_key="category.id")
+    account_id: int | None = Field(default=None, foreign_key="account.id")
 
 
 class TransactionTable(TransactionBase, table=True):
