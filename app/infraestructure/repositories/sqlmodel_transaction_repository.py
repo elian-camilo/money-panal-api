@@ -13,7 +13,7 @@ class SQLModelTransactionRepository(TransactionRepositoryInterface):
 
         # Physical actions on DB
         self.session.add(transaction_db)
-        self.session.commit()
+        self.session.flush()
         self.session.refresh(transaction_db)
 
         return TransactionEntity.model_validate(transaction_db)
@@ -48,6 +48,6 @@ class SQLModelTransactionRepository(TransactionRepositoryInterface):
         if not transaction_db:
             return None
         self.session.delete(transaction_db)
-        self.session.flush
+        self.session.flush()
 
         return True

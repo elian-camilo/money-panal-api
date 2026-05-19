@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.infraestructure.unit_of_work import UnitOfWork
-from app.domain.entities.transaction import Transaction
 from app.application.services.transaction_service import CreateTransactionUseCase, GetTransactionUseCase, ListTransactionUseCase, UpdateTransactionUseCase, DeleteTransactionUseCase
 from app.infraestructure.database import get_session
 from app.infraestructure.models.transaction import TransactionPublic, TransactionCreate
