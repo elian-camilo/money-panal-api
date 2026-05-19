@@ -8,5 +8,5 @@ class Debt(BaseModel):
     person_name: str
     amount: float
     type: str
-    due_date: date
+    due_date: date | None = None
     is_settled: bool
