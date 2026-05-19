@@ -1,6 +1,7 @@
 from sqlmodel import Session, SQLModel, create_engine
 # import all models we have.
 from .models.transaction import TransactionTable
+from .models.category import CategoryTable
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"

@@ -23,5 +23,6 @@ class DebtTable(DebtBase, table=True):
 class DebtPublic(DebtBase):
     id: int
 
+
 class DebtCreate(DebtBase):
     pass
