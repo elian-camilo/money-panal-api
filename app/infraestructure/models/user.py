@@ -1,5 +1,8 @@
 from sqlmodel import SQLModel, Field
-from datetime import datetime
+from datetime import datetime, UTC
+
+def utc_now():
+    return datetime.now(UTC)
 
 
 class UserBase(SQLModel):
@@ -11,7 +14,7 @@ class UserBase(SQLModel):
 
 class UserTable(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class UserPublic(UserBase):
