@@ -9,21 +9,21 @@ class CreateAccountUseCase:
         if account.profit_percentage < 0.0:
             raise ValueError("The profit percentaje don't be less than zero.")
         
-        return self.uow.accout_repository.save(account)
+        return self.uow.account_repository.save(account)
 
 class ListAccountUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
     def execute(self, offset: int, limit: int) -> list[Account]:
-        return self.uow.accout_repository.get_all(offset, limit)
+        return self.uow.account_repository.get_all(offset, limit)
 
 class GetAccountUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
     def execute(self, id: int) -> Account:
-        account = self.uow.accout_repository.get_by_id(id)
+        account = self.uow.account_repository.get_by_id(id)
         if not account:
             raise ValueError("Account doesn't exist.")
         return account
@@ -33,7 +33,7 @@ class UpdateAccountUseCase:
         self.uow = uow
 
     def execute(self, id: int, account: Account) -> Account:
-        account_updated = self.uow.accout_repository.update(id, account)
+        account_updated = self.uow.account_repository.update(id, account)
         if not account_updated:
             return ValueError("Account doesn't exist.")
         return account_updated
@@ -43,7 +43,7 @@ class DeleteAccountUseCase:
         self.uow = uow
 
     def execute(self, id: int) -> dict:
-        account = self.uow.accout_repository.delete(id)
+        account = self.uow.account_repository.delete(id)
         if not account:
             raise ValueError("Account doesn't exist.")
         return {
