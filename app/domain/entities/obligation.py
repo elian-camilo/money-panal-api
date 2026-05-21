@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import date
+from datetime import date, datetime
 
 class Obligation(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -11,3 +11,5 @@ class Obligation(BaseModel):
     due_date: date
     is_paid: bool
     recurring: bool
+    user_id: int | None = None
+    created_at: datetime
