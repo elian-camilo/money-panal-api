@@ -5,6 +5,7 @@ from app.presentation.api.v1.category_router import router as category_router
 from app.presentation.api.v1.account_router import router as account_router
 from app.presentation.api.v1.obligation_router import router as obligation_router
 from app.presentation.api.v1.debt_router import router as debt_router
+from app.presentation.api.v1.user_router import router as user_router
 
 """ 
 @asynccontextmanager
@@ -22,6 +23,7 @@ app.include_router(category_router, prefix="/api/v1", tags=["category"])
 app.include_router(account_router, prefix="/api/v1", tags=["account"])
 app.include_router(obligation_router, prefix="/api/v1", tags=["obligation"])
 app.include_router(debt_router, prefix="/api/v1", tags=["debt"])
+app.include_router(user_router, prefix="/api/v1", tags=["user"])
 
 @app.get("/")
 def home() -> dict:

@@ -1,12 +1,12 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
-class Category(BaseModel):
+class User(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int | None = None
-    name: str
-    description: str | None = None
-    user_id: int | None = None
+    first_name: str
+    last_name: str
+    email: str
+    hashed_password: str
     created_at: datetime
-    

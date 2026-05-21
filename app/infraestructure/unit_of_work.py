@@ -4,6 +4,7 @@ from app.infraestructure.repositories.sqlmodel_category_repository import SQLMod
 from app.infraestructure.repositories.sqlmodel_account_repository import SQLModelAccountRespository
 from app.infraestructure.repositories.sqlmodel_obligation_repository import SQLModelObligationRepository
 from app.infraestructure.repositories.sqlmodel_debt_repository import SQLModelDebtRepository
+from app.infraestructure.repositories.sqlmodel_user_repository import SQLModelUserRespository
 from sqlmodel import Session
 
 class UnitOfWork(IUnitOfWork):
@@ -12,9 +13,10 @@ class UnitOfWork(IUnitOfWork):
 
         self.transaction_repository = SQLModelTransactionRepository(self.session)
         self.category_repository = SQLModelCategoryRespository(self.session)
-        self.accout_repository = SQLModelAccountRespository(self.session)
+        self.account_repository = SQLModelAccountRespository(self.session)
         self.obligation_repository = SQLModelObligationRepository(self.session)
         self.debt_repository = SQLModelDebtRepository(self.session)
+        self.user_repository = SQLModelUserRespository(self.session)
 
     def __enter__(self):
         return self

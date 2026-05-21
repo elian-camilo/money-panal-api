@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import date
+from datetime import date, datetime
 
 class Debt(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -10,3 +10,5 @@ class Debt(BaseModel):
     type: str
     due_date: date | None = None
     is_settled: bool
+    user_id: int | None = None
+    created_at: datetime
