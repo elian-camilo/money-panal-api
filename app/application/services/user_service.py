@@ -3,7 +3,6 @@ from app.domain.entities.user import User
 from app.application.interfaces.password_hasher import PasswordHasherInterface
 from app.application.interfaces.token_provider import ITokenProvider
 from pydantic import BaseModel
-from datetime import datetime
 
 class RegisterUserCommand(BaseModel):
     first_name: str
@@ -23,8 +22,7 @@ class RegisterUserUseCase:
             first_name=command.first_name,
             last_name=command.last_name,
             email=command.email,
-            password=hashed_password,
-            created_at=datetime.utcnow()
+            password=hashed_password
         )
 
         return self.uow.user_repository.save(new_user)

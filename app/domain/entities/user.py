@@ -9,4 +9,4 @@ class User(BaseModel):
     last_name: str
     email: str
     password: str
-    created_at: datetime
+    created_at: datetime | None = None
