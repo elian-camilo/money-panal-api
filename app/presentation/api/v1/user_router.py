@@ -1,28 +1,61 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.user_service import (
-    CreateUserUseCase,
+    RegisterUserUseCase,
+    RegisterUserCommand,
     ListUserUseCase,
     GetUserUseCase,
     UpdateUserUseCase,
-    DeleteUserUseCase
+    DeleteUserUseCase,
+    AuthenticateUserUseCase,
+    LoginUserCommand
 )
 from app.infraestructure.database import get_session
 from app.infraestructure.models.user import (
     UserPublic,
     UserCreate
 )
+from app.infraestructure.security.password_hasher import PasswordHasher
+from app.infraestructure.security.jwt_provider import JwtTokenProvider
 
 router = APIRouter(prefix="/users")
 
-@router.post("/", response_model=UserPublic)
-def create_user(user: UserCreate, session=Depends(get_session)):
+hasher = PasswordHasher()
+jwt_provider = JwtTokenProvider()
+
+@router.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     uow = UnitOfWork(session)
-    service = CreateUserUseCase(uow=uow)
+    service = AuthenticateUserUseCase(uow=uow, hasher=hasher, token_provider=jwt_provider)
+    
+    command = LoginUserCommand(
+        email=form_data.username,
+        password=form_data.password
+    )
 
     try:
         with uow:
-            return service.execute(user)
+            token = service.execute(command)
+            return {"access_token": token, "token_type": "bearer"}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e), headers={"WWW-Authenticate": "Bearer"})
+
+@router.post("/", response_model=UserPublic)
+def register_user(user: UserCreate, session=Depends(get_session)):
+    uow = UnitOfWork(session)
+    service = RegisterUserUseCase(uow=uow, hasher=hasher)
+    
+    command = RegisterUserCommand(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        password=user.password
+    )
+
+    try:
+        with uow:
+            return service.execute(command)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
