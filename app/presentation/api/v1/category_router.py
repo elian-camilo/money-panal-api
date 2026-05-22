@@ -12,8 +12,9 @@ from app.infraestructure.models.category import (
     CategoryPublic,
     CategoryCreate
 )
+from app.presentation.api.dependencies import get_current_user
 
-router = APIRouter(prefix="/categories")
+router = APIRouter(prefix="/categories", dependencies=[Depends(get_current_user)])
 
 @router.post("/", response_model=CategoryPublic)
 def create_category(category: CategoryCreate, session=Depends(get_session)):

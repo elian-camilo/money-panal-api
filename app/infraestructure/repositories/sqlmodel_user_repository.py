@@ -24,6 +24,12 @@ class SQLModelUserRespository(UserRepositoryInterface):
         if not user_db:
             return None
         return UserEntity.model_validate(user_db)
+
+    def get_by_email(self, email: str) -> UserEntity:
+        user_db = self.session.exec(select(UserTable).where(UserTable.email == email)).first()
+        if not user_db:
+            return None
+        return UserEntity.model_validate(user_db)
     
     def update(self, id: int, user: UserEntity) -> UserEntity:
         user_db = self.session.get(UserTable, id)

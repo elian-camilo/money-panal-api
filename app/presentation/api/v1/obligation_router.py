@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.obligation_service import CreateObligationUseCase, GetObligationUseCase, ListObligationUseCase, UpdateObligationUseCase, DeleteObligationUseCase
 from app.infraestructure.database import get_session
+from app.presentation.api.dependencies import get_current_user
 from app.infraestructure.models.obligation import ObligationPublic, ObligationCreate
 
-router = APIRouter(prefix="/obligations")
+router = APIRouter(prefix="/obligations", dependencies=[Depends(get_current_user)])
 
 @router.post("/", response_model=ObligationPublic)
 def create_obligation(obligation: ObligationCreate, session=Depends(get_session)):

@@ -9,7 +9,7 @@ class UserBase(SQLModel):
     first_name: str = Field(index=True, max_length=30)
     last_name: str | None = Field(..., max_length=50)
     email: str = Field(..., index=True, max_length=80)
-    hashed_password: str = Field(...,max_length=128)
+    password: str = Field(...,max_length=128)
 
 
 class UserTable(UserBase, table=True):

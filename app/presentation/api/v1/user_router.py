@@ -1,33 +1,68 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.user_service import (
-    CreateUserUseCase,
+    RegisterUserUseCase,
+    RegisterUserCommand,
     ListUserUseCase,
     GetUserUseCase,
     UpdateUserUseCase,
-    DeleteUserUseCase
+    DeleteUserUseCase,
+    AuthenticateUserUseCase,
+    LoginUserCommand
 )
 from app.infraestructure.database import get_session
 from app.infraestructure.models.user import (
     UserPublic,
     UserCreate
 )
+from app.infraestructure.security.password_hasher import PasswordHasher
+from app.infraestructure.security.jwt_provider import JwtTokenProvider
+from app.presentation.api.dependencies import get_current_user
+from app.domain.entities.user import User
 
 router = APIRouter(prefix="/users")
 
-@router.post("/", response_model=UserPublic)
-def create_user(user: UserCreate, session=Depends(get_session)):
+hasher = PasswordHasher()
+jwt_provider = JwtTokenProvider()
+
+@router.post("/login", tags=["auth"])
+def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     uow = UnitOfWork(session)
-    service = CreateUserUseCase(uow=uow)
+    service = AuthenticateUserUseCase(uow=uow, hasher=hasher, token_provider=jwt_provider)
+    
+    command = LoginUserCommand(
+        email=form_data.username,
+        password=form_data.password
+    )
 
     try:
         with uow:
-            return service.execute(user)
+            token = service.execute(command)
+            return {"access_token": token, "token_type": "bearer"}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e), headers={"WWW-Authenticate": "Bearer"})
+
+@router.post("/", response_model=UserPublic, tags=["auth"])
+def register_user(user: UserCreate, session=Depends(get_session)):
+    uow = UnitOfWork(session)
+    service = RegisterUserUseCase(uow=uow, hasher=hasher)
+    
+    command = RegisterUserCommand(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        password=user.password
+    )
+
+    try:
+        with uow:
+            return service.execute(command)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/", response_model=list[UserPublic])
-def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session)):
+def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = ListUserUseCase(uow=uow)
 
@@ -38,7 +73,7 @@ def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session)
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/{id}", response_model=UserPublic)
-def get_user(id: int, session=Depends(get_session)):
+def get_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = GetUserUseCase(uow=uow)
 
@@ -49,7 +84,7 @@ def get_user(id: int, session=Depends(get_session)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.put("/{id}", response_model=UserPublic)
-def update_user(id: int, user: UserCreate, session=Depends(get_session)):
+def update_user(id: int, user: UserCreate, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = UpdateUserUseCase(uow=uow)
 
@@ -60,7 +95,7 @@ def update_user(id: int, user: UserCreate, session=Depends(get_session)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.delete("/{id}")
-def delete_user(id: int, session=Depends(get_session)) -> dict:
+def delete_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteUserUseCase(uow=uow)
 

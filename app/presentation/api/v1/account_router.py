@@ -12,8 +12,9 @@ from app.infraestructure.models.account import (
     AccountPublic,
     AccountCreate
 )
+from app.presentation.api.dependencies import get_current_user
 
-router = APIRouter(prefix="/accounts")
+router = APIRouter(prefix="/accounts", dependencies=[Depends(get_current_user)])
 
 @router.post("/", response_model=AccountPublic)
 def create_account(account: AccountCreate, session=Depends(get_session)):

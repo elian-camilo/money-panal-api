@@ -8,5 +8,5 @@ class User(BaseModel):
     first_name: str
     last_name: str
     email: str
-    hashed_password: str
+    password: str
     created_at: datetime
