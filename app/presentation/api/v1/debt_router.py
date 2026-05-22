@@ -12,8 +12,9 @@ from app.infraestructure.models.debt import (
     DebtPublic,
     DebtCreate
 )
+from app.presentation.api.dependencies import get_current_user
 
-router = APIRouter(prefix="/debts")
+router = APIRouter(prefix="/debts", dependencies=[Depends(get_current_user)])
 
 @router.post("/", response_model=DebtPublic)
 def create_debt(debt: DebtCreate, session=Depends(get_session)):

@@ -1,6 +1,6 @@
 from app.application.interfaces.unit_of_work import IUnitOfWork
 from app.domain.entities.user import User
-from app.domain.repositories.password_hasher import PasswordHasherInterface
+from app.application.interfaces.password_hasher import PasswordHasherInterface
 from app.application.interfaces.token_provider import ITokenProvider
 from pydantic import BaseModel
 from datetime import datetime

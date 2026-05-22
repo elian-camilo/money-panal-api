@@ -18,13 +18,15 @@ from app.infraestructure.models.user import (
 )
 from app.infraestructure.security.password_hasher import PasswordHasher
 from app.infraestructure.security.jwt_provider import JwtTokenProvider
+from app.presentation.api.dependencies import get_current_user
+from app.domain.entities.user import User
 
 router = APIRouter(prefix="/users")
 
 hasher = PasswordHasher()
 jwt_provider = JwtTokenProvider()
 
-@router.post("/login")
+@router.post("/login", tags=["auth"])
 def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     uow = UnitOfWork(session)
     service = AuthenticateUserUseCase(uow=uow, hasher=hasher, token_provider=jwt_provider)
@@ -41,7 +43,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e), headers={"WWW-Authenticate": "Bearer"})
 
-@router.post("/", response_model=UserPublic)
+@router.post("/", response_model=UserPublic, tags=["auth"])
 def register_user(user: UserCreate, session=Depends(get_session)):
     uow = UnitOfWork(session)
     service = RegisterUserUseCase(uow=uow, hasher=hasher)
@@ -60,7 +62,7 @@ def register_user(user: UserCreate, session=Depends(get_session)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/", response_model=list[UserPublic])
-def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session)):
+def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = ListUserUseCase(uow=uow)
 
@@ -71,7 +73,7 @@ def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session)
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/{id}", response_model=UserPublic)
-def get_user(id: int, session=Depends(get_session)):
+def get_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = GetUserUseCase(uow=uow)
 
@@ -82,7 +84,7 @@ def get_user(id: int, session=Depends(get_session)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.put("/{id}", response_model=UserPublic)
-def update_user(id: int, user: UserCreate, session=Depends(get_session)):
+def update_user(id: int, user: UserCreate, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = UpdateUserUseCase(uow=uow)
 
@@ -93,7 +95,7 @@ def update_user(id: int, user: UserCreate, session=Depends(get_session)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.delete("/{id}")
-def delete_user(id: int, session=Depends(get_session)) -> dict:
+def delete_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteUserUseCase(uow=uow)
 
