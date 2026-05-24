@@ -7,6 +7,15 @@ from app.presentation.api.v1.obligation_router import router as obligation_route
 from app.presentation.api.v1.debt_router import router as debt_router
 from app.presentation.api.v1.user_router import router as user_router
 
+from app.domain.exceptions import AppBaseException
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
+from app.presentation.handlers import (
+    domain_exception_handler, 
+    http_exception_handler, 
+    validation_exception_handler
+)
+
 """ 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,6 +26,10 @@ async def lifespan(app: FastAPI):
 
 # app = FastAPI(lifespan=lifespan)
 app = FastAPI()
+
+app.exception_handler(AppBaseException, domain_exception_handler)
+app.exception_handler(StarletteHTTPException, http_exception_handler)
+app.exception_handler(RequestValidationError, validation_exception_handler)
 
 app.include_router(transaction_router, prefix="/api/v1", tags=["transaction"])
 app.include_router(category_router, prefix="/api/v1", tags=["category"])
