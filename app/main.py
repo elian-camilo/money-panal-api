@@ -27,9 +27,9 @@ async def lifespan(app: FastAPI):
 # app = FastAPI(lifespan=lifespan)
 app = FastAPI()
 
-app.exception_handler(AppBaseException, domain_exception_handler)
-app.exception_handler(StarletteHTTPException, http_exception_handler)
-app.exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(AppBaseException, domain_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 app.include_router(transaction_router, prefix="/api/v1", tags=["transaction"])
 app.include_router(category_router, prefix="/api/v1", tags=["category"])

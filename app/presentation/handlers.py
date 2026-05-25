@@ -47,6 +47,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "success": False,
             "error_type": "ValidationError",
             "message": "Error in the data.",
-            "details": exc.error()
+            "details": exc.errors()
         }
     )
