@@ -9,6 +9,7 @@ from app.domain.exceptions import (
     ValidationException,
     UnauthorizedException,
     InvalidAmountException,
+    UnprocessableEntityException
 )
 
 async def domain_exception_handler(request: Request, exc: AppBaseException):
@@ -17,6 +18,7 @@ async def domain_exception_handler(request: Request, exc: AppBaseException):
         ValidationException: 400,
         UnauthorizedException: 401,
         InvalidAmountException: 400,
+        UnprocessableEntityException: 422,
     }
 
     status_code = status_mapping.get(type(exc), 500)

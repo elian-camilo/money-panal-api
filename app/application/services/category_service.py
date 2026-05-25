@@ -2,7 +2,7 @@ from app.application.interfaces.unit_of_work import IUnitOfWork
 from app.domain.entities.caterogy import Category
 from app.domain.exceptions import (
     ResourceNotFoundException,
-    ValidationException
+    UnprocessableEntityException
 
 )
 
@@ -13,7 +13,7 @@ class CreateCategoryUseCase:
     def execute(self, category: Category) -> Category:
         # Business Rules
         if not category.name:
-            raise ValidationException("Category don't have a name.")
+            raise UnprocessableEntityException("Category don't have a name.")
         with self.uow:
             return self.uow.category_repository.save(category)
     
