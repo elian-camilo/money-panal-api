@@ -22,7 +22,7 @@ class ListAccountUseCase:
 
     def execute(self, offset: int, limit: int) -> list[Account]:
         with self.uow:
-            self.uow.account_repository.get_all(offset, limit)
+            return self.uow.account_repository.get_all(offset, limit)
 
 class GetAccountUseCase:
     def __init__(self, uow: IUnitOfWork):
