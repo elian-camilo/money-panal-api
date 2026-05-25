@@ -16,7 +16,6 @@ async def domain_exception_handler(request: Request, exc: AppBaseException):
     status_mapping = {
         ResourceNotFoundException: 404,
         ValidationException: 400,
-        UnauthorizedException: 401,
         InvalidAmountException: 400,
         UnprocessableEntityException: 422,
     }
@@ -51,4 +50,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "message": "Error in the data.",
             "details": exc.errors()
         }
+    )
+
+async def unauthorized_exception_handler(request: Request, exc: UnauthorizedException):
+    return JSONResponse(
+        status_code=401,
+        content={
+            "success": False,
+            "error_type": "Unauthorized",
+            "message": exc.message
+        },
+        headers={"WWW-Authenticate": "Bearer"}
     )

@@ -7,13 +7,14 @@ from app.presentation.api.v1.obligation_router import router as obligation_route
 from app.presentation.api.v1.debt_router import router as debt_router
 from app.presentation.api.v1.user_router import router as user_router
 
-from app.domain.exceptions import AppBaseException
+from app.domain.exceptions import AppBaseException, UnauthorizedException
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.exceptions import RequestValidationError
 from app.presentation.handlers import (
     domain_exception_handler, 
     http_exception_handler, 
-    validation_exception_handler
+    validation_exception_handler,
+    unauthorized_exception_handler,
 )
 
 """ 
@@ -30,6 +31,7 @@ app = FastAPI()
 app.add_exception_handler(AppBaseException, domain_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(UnauthorizedException, unauthorized_exception_handler)
 
 app.include_router(transaction_router, prefix="/api/v1", tags=["transaction"])
 app.include_router(category_router, prefix="/api/v1", tags=["category"])
