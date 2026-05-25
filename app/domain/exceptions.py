@@ -23,3 +23,8 @@ class UnauthorizedException(AppBaseException):
 class InvalidAmountException(AppBaseException):
     """Exception raised for invalid amount values."""
     pass
+
+
+class UnprocessableEntityException(AppBaseException):
+    """Exception raised for violation to business rules"""
+    pass

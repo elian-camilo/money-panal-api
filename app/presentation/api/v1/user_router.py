@@ -35,13 +35,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_
         email=form_data.username,
         password=form_data.password
     )
-
-    try:
-        with uow:
-            token = service.execute(command)
-            return {"access_token": token, "token_type": "bearer"}
-    except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e), headers={"WWW-Authenticate": "Bearer"})
+    token = service.execute(command)
+    return {"access_token": token, "token_type": "bearer"}
 
 @router.post("/", response_model=UserPublic, tags=["auth"])
 def register_user(user: UserCreate, session=Depends(get_session)):
@@ -54,53 +49,28 @@ def register_user(user: UserCreate, session=Depends(get_session)):
         email=user.email,
         password=user.password
     )
-
-    try:
-        with uow:
-            return service.execute(command)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.execute(command)
     
 @router.get("/", response_model=list[UserPublic])
 def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = ListUserUseCase(uow=uow)
-
-    try:
-        with uow:
-            return service.execute(offset, limit)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.execute(offset, limit)
     
 @router.get("/{id}", response_model=UserPublic)
 def get_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = GetUserUseCase(uow=uow)
-
-    try:
-        with uow:
-            return service.execute(id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.execute(id)
     
 @router.put("/{id}", response_model=UserPublic)
 def update_user(id: int, user: UserCreate, session=Depends(get_session), current_user: User = Depends(get_current_user)):
     uow = UnitOfWork(session)
     service = UpdateUserUseCase(uow=uow)
-
-    try:
-        with uow:
-            return service.execute(id, user)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.execute(id, user)
     
 @router.delete("/{id}")
 def delete_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteUserUseCase(uow=uow)
-
-    try:
-        with uow:
-            return service.execute(id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.execute(id)
