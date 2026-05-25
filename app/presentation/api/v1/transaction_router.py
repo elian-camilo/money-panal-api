@@ -15,7 +15,6 @@ def create_transaction(transaction: TransactionCreate, session=Depends(get_sessi
     service = CreateTransactionUseCase(uow=uow)
     # Execute
     return service.execute(transaction)
-
     
 @router.get("/", response_model=list[TransactionPublic])
 def get_all_transactions(offset: int = 0, limit: int = 100, session=Depends(get_session)):
