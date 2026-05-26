@@ -7,6 +7,10 @@ from app.domain.exceptions import (
     ResourceNotFoundException,
     UnauthorizedException,
 )
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class RegisterUserCommand(BaseModel):
     first_name: str
@@ -30,7 +34,9 @@ class RegisterUserUseCase:
                 password=hashed_password
             )
 
-            return self.uow.user_repository.save(new_user)
+            user_saved = self.uow.user_repository.save(new_user)
+        logger.info("user_created", name=user_saved.first_name, user_id=user_saved.id)
+        return user_saved
 
 class LoginUserCommand(BaseModel):
     email: str
@@ -46,10 +52,12 @@ class AuthenticateUserUseCase:
         with self.uow:
             user = self.uow.user_repository.get_by_email(command.email)
             if not user:
+                logger.warning("invalid_credentials")
                 raise UnauthorizedException("Email or password incorrect.")
 
             is_valid = self.hasher.verify_password(command.password, user.password)
             if not is_valid:
+                logger.warning("invalid_credentials")
                 raise UnauthorizedException("Email or password incorrect.")
 
             payload = {"sub": user.email}
@@ -61,7 +69,10 @@ class ListUserUseCase:
 
     def execute(self, offset: int, limit: int) -> list[User]:
         with self.uow:
-            return self.uow.user_repository.get_all(offset, limit)
+            users = self.uow.user_repository.get_all(offset, limit)
+        
+        logger.debug("users_listed", offset=offset, limit=limit)
+        return users
 
 class GetUserUseCase:
     def __init__(self, uow: IUnitOfWork):
@@ -71,8 +82,11 @@ class GetUserUseCase:
         with self.uow:
             user = self.uow.user_repository.get_by_id(id)
             if not user:
+                logger.warning("user_not_found", id=id)
                 raise ResourceNotFoundException("User ID:{id} doesn't exist.")
-            return user
+            
+        logger.debug("user_retrieved", id=id)    
+        return user
 
 class UpdateUserUseCase:
     def __init__(self, uow: IUnitOfWork):
@@ -82,20 +96,21 @@ class UpdateUserUseCase:
         with self.uow:
             user_updated = self.uow.user_repository.update(id, user)
             if not user_updated:
+                logger.warning("user_not_found", id=id)
                 return ResourceNotFoundException("User ID:{id} doesn't exist.")
-            return user_updated
+
+        logger.info("user_updated", name=user_updated.first_name, user_id=user_updated.id)
+        return user_updated
 
 class DeleteUserUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, id: int) -> dict:
+    def execute(self, id: int) -> None:
         with self.uow:
             user = self.uow.user_repository.delete(id)
             if not user:
+                logger.warning("user_not_found", id=id)
                 raise ResourceNotFoundException("User ID:{id} doesn't exist.")
-            return {
-                "status": "success",
-                "message": "User deleted successfully",
-                "delete_id": id
-            }
+
+        logger.info("user_deleted", id=id)

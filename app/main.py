@@ -1,4 +1,6 @@
 # from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from app.presentation.api.v1.transaction_router import router as transaction_router
 from app.presentation.api.v1.category_router import router as category_router
@@ -16,6 +18,12 @@ from app.presentation.handlers import (
     validation_exception_handler,
     unauthorized_exception_handler,
 )
+from asgi_correlation_id import CorrelationIdMiddleware
+from app.core.logger import configure_logger, get_logger
+
+load_dotenv()
+
+configure_logger(is_production=os.getenv("PRODUCTION", False))
 
 """ 
 @asynccontextmanager
@@ -27,6 +35,11 @@ async def lifespan(app: FastAPI):
 
 # app = FastAPI(lifespan=lifespan)
 app = FastAPI()
+
+app.add_middleware(CorrelationIdMiddleware)
+
+logger = get_logger(__name__)
+logger.info("api_started", version="1.0.0")
 
 app.add_exception_handler(AppBaseException, domain_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)

@@ -44,4 +44,5 @@ def update_category(id: int, category: CategoryCreate, session=Depends(get_sessi
 def delete_category(id: int, session=Depends(get_session)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteCategoryUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "Category deleted successfully", "delete_id": id}

@@ -44,4 +44,5 @@ def update_debt(id: int, debt: DebtCreate, session=Depends(get_session)):
 def delete_debt(id: int, session=Depends(get_session)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteDebtUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "Debt deleted successfully", "delete_id": id}
