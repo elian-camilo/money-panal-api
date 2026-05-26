@@ -4,6 +4,9 @@ from app.domain.exceptions import (
     ResourceNotFoundException,  
     InvalidAmountException,
 )
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class CreateTransactionUseCase:
@@ -11,8 +14,11 @@ class CreateTransactionUseCase:
         self.uow = uow
 
     def execute(self, transaction: Transaction) -> Transaction:
+        logger.info("validating_transaction", amount=transaction.amount, account=transaction.account_id)
+
         # Business Rules
         if transaction.amount < 0.0:
+            logger.warning("invalid_amount_detected", amount=transaction.amount)
             raise InvalidAmountException("The amount don't be less than zero.")
         with self.uow:
             # Pass to repository and save

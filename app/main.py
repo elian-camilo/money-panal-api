@@ -17,6 +17,12 @@ from app.presentation.handlers import (
     unauthorized_exception_handler,
 )
 
+from asgi_correlation_id import CorrelationIdMiddleware
+from app.core.logger import configure_logger, get_logger
+
+# I need to declarate a variable in env for this. PRODUCTION=false
+configure_logger(is_production=False)
+
 """ 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,6 +33,11 @@ async def lifespan(app: FastAPI):
 
 # app = FastAPI(lifespan=lifespan)
 app = FastAPI()
+
+app.add_middleware(CorrelationIdMiddleware)
+
+logger = get_logger(__name__)
+logger.info("api_started", version="1.0.0")
 
 app.add_exception_handler(AppBaseException, domain_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)

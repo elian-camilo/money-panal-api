@@ -17,6 +17,8 @@ dependencies = [
     "dotenv>=0.9.9",
     "pwdlib[argon2]>=0.3.0",
     "python-multipart>=0.0.29",
+    "structlog>=25.5.0",
+    "asgi-correlation-id>=4.3.4",
 ]
 
 [tool.pytest.ini_options]
