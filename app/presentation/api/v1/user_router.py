@@ -73,4 +73,5 @@ def update_user(id: int, user: UserCreate, session=Depends(get_session), current
 def delete_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteUserUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "User deleted successfully", "deleted_id": id}

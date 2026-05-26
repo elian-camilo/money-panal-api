@@ -35,4 +35,5 @@ def update_obligation(id: int, obligation: ObligationCreate, session=Depends(get
 def delete_obligation(id: int, session=Depends(get_session)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteObligationUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "Obligation deleted successfully", "delete_id": id}

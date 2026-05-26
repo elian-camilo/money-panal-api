@@ -1,4 +1,6 @@
 # from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from app.presentation.api.v1.transaction_router import router as transaction_router
 from app.presentation.api.v1.category_router import router as category_router
@@ -16,12 +18,12 @@ from app.presentation.handlers import (
     validation_exception_handler,
     unauthorized_exception_handler,
 )
-
 from asgi_correlation_id import CorrelationIdMiddleware
 from app.core.logger import configure_logger, get_logger
 
-# I need to declarate a variable in env for this. PRODUCTION=false
-configure_logger(is_production=False)
+load_dotenv()
+
+configure_logger(is_production=os.getenv("PRODUCTION", False))
 
 """ 
 @asynccontextmanager
