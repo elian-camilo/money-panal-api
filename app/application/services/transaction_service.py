@@ -14,15 +14,11 @@ class CreateTransactionUseCase:
         self.uow = uow
 
     def execute(self, transaction: Transaction) -> Transaction:
-        logger.info("validating_transaction", amount=transaction.amount, account=transaction.account_id)
-
-        # Business Rules
-        if transaction.amount < 0.0:
-            logger.warning("invalid_amount_detected", amount=transaction.amount)
-            raise InvalidAmountException("The amount don't be less than zero.")
         with self.uow:
-            # Pass to repository and save
-            return self.uow.transaction_repository.save(transaction)
+            transaction_saved = self.uow.transaction_repository.save(transaction)
+
+        logger.info("transaction_created", id=transaction_saved.id, amount=transaction.amount, account=transaction.account_id, user_id=transaction.user_id)
+        return transaction_saved
     
 class ListTransactionUseCase:
     def __init__(self, uow: IUnitOfWork):
@@ -30,8 +26,11 @@ class ListTransactionUseCase:
 
     def execute(self, offset: int, limit: int) -> list[Transaction]:
         with self.uow:
-            return self.uow.transaction_repository.get_all(offset, limit)
-    
+            transactions = self.uow.transaction_repository.get_all(offset, limit)
+
+        logger.debug("transactions_listed", offset=offset, limit=limit)
+        return transactions
+
 class GetTransactionUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
@@ -40,8 +39,11 @@ class GetTransactionUseCase:
         with self.uow:
             transaction = self.uow.transaction_repository.get_by_id(id)
             if not transaction:
+                logger.warning("transaction_not_found", id=id)
                 raise ResourceNotFoundException(f"Transaction ID:{id} doesn't exist.")
-            return transaction
+
+        logger.debug("transaction_retrieved", id=transaction.id)
+        return transaction
     
 class UpdateTransactionUseCase:
     def __init__(self, uow: IUnitOfWork):
@@ -49,23 +51,24 @@ class UpdateTransactionUseCase:
 
     def execute(self, id: int, transaction: Transaction) -> Transaction:
         with self.uow:
-            transaction_uptated = self.uow.transaction_repository.update(id, transaction)
-            if not transaction_uptated:
+            transaction_updated = self.uow.transaction_repository.update(id, transaction)
+            if not transaction_updated:
+                logger.warning("transaction_not_found", id=id)
                 raise ResourceNotFoundException(f"Transaction ID:{id} doesn't exist.")
-            return transaction_uptated
+            
+        logger.info("transaction_updated", id=transaction_updated.id, amount=transaction.amount, account=transaction.account_id, user_id=transaction.user_id)
+        return transaction_updated
     
 
 class DeleteTransactionUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, id: int) -> dict:
+    def execute(self, id: int) -> None:
         with self.uow:
             transaction = self.uow.transaction_repository.delete(id)
             if not transaction:
+                logger.warning("transaction_not_found", id=id)
                 raise ResourceNotFoundException(f"Transaction ID:{id} doesn't exist.")
-            return {
-                "status": "success",
-                "message": "Transaction deleted successfully",
-                "delete_id": id
-            }
+
+        logger.info("transaction_deleted", id=id)

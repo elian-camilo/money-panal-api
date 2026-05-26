@@ -47,7 +47,7 @@ def configure_logger(is_production: bool = False):
     
     root_logger = logging.getLogger()
     root_logger.handlers = [handler]
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(logging.DEBUG)
 
     # 6. Silenciar el ruido por defecto de Uvicorn para que no haya logs duplicados
     for _log in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
@@ -55,7 +55,7 @@ def configure_logger(is_production: bool = False):
         uvicorn_logger.handlers.clear()
         uvicorn_logger.propagate = True
 
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.DEBUG)
 
 def get_logger(name: str):
     return structlog.get_logger(name)

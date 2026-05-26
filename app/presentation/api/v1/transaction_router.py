@@ -39,4 +39,5 @@ def update_transaction(id: int, transaction: TransactionCreate, session=Depends(
 def delete_trasaction(id: int, session=Depends(get_session)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteTransactionUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "Transaction deleted successfully", "delete_id": id}

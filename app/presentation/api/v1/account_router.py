@@ -44,4 +44,5 @@ def update_account(id: int, account: AccountCreate, session=Depends(get_session)
 def delete_account(id: int, session=Depends(get_session)) -> dict:
     uow = UnitOfWork(session)
     service = DeleteAccountUseCase(uow=uow)
-    return service.execute(id)
+    service.execute(id)
+    return {"status": "success", "message": "Account deleted successfully", "deleted_id": id}
