@@ -19,6 +19,8 @@ dependencies = [
     "python-multipart>=0.0.29",
     "structlog>=25.5.0",
     "asgi-correlation-id>=4.3.4",
+    "pytest>=9.0.3",
+    "httpx>=0.28.1",
 ]
 
 [tool.pytest.ini_options]
