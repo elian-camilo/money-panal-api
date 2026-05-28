@@ -16,3 +16,5 @@ htmlcov/
 *.db
 *.sqlite
 *.sqlite3
+
+pytest_output.txt
