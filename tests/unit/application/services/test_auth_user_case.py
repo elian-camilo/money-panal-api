@@ -5,14 +5,20 @@ from app.application.services.user_service import AuthenticateUserUseCase, Login
 from app.domain.entities.user import User
 from app.domain.exceptions import UnauthorizedException
 
+import pytest
+from unittest.mock import MagicMock
+
+from app.application.services.user_service import AuthenticateUserUseCase, LoginUserCommand
+from app.domain.entities.user import User
+from app.domain.exceptions import UnauthorizedException
+
 def test_authenticate_user_success():
-    # 1. Created mock from interfaces.
+    # 1. Creamos los mocks de las interfaces que necesita la construcción del user_service.
     uow = MagicMock()
     hasher = MagicMock()
     token_provider = MagicMock()
 
-    # simulamos el comportamiento de resostirio de user self.uow.user_repository.
-    # cuando el caso de uso llame uow.user_repository.get_by_email regresamos un usuario en memoria.
+    # creamos un usuario mock que sera el resultado mock de .get_by_email
     fake_user = User(
         id=1,
         first_name="Leo",
@@ -20,43 +26,39 @@ def test_authenticate_user_success():
         email="leo@messi.com",
         password="hashed_password_123"
     )
-    # significa que cuando el servicio haga el .get_by_email va a regresar
-    # auntomaticamente el fake_user? En vez de consultar realmente el repo?
+    # establecemos que cuando se llame a la función .get_by_email el resultado sea el objeto *fake_user*
     uow.user_repository.get_by_email.return_value = fake_user
 
-    # el mock me permite establecer la respuesta para una función antes que la tome?
-    # para que no la ejecute si no que directamente se setee el valor que estoy escribiendo aquí?
-    # simulamos el hasher
+    # establecemos que cuando se llame a la función verify_password el resultado sea *True*
     hasher.verify_password.return_value = True
 
-    # Cuando vaya a realizar esta acción realmente retorna este valor dirctamente.
-    # Simulación del token provider
+    # establecemos que cuando se llame a la función verify_password el resultado sea *fake-jwt-token*
     token_provider.generate_token.return_value = "fake-jwt-token"
 
-    # instanciamos el caso de uso inyectandole los mocks
-    # instanciarlo como lo hacemos en el router.
+    # instanciamos el caso de uso inyectandole las interfaces mockeadas. **AuthenticateUserUseCase**.
     user_case = AuthenticateUserUseCase(
         uow=uow,
         hasher=hasher,
         token_provider=token_provider
     )
 
-    # Ejecutamos el caso de uso pasandole las credenciales por medio del command.
-    # realmente no importa la password ya que tenemos seteado que verify_password es True.
+    # Ejecutamos el caso de uso pasandole las credenciales mediante un *command*.
+    # Realmente no importa la password ya que tenemos seteado que verify_password es True.
     command= LoginUserCommand(email="leo@messi.com", password="password_correcto")
     token = user_case.execute(command)
 
     # Assert (verificar que la logica de negocio se cumplio).
-    # el servicio retorna un token, ese token lo mockeamos antes.
+    # El servicio retorna el token que seteamos antes *fake-jwt-token*
     assert token == "fake-jwt-token"
 
-    # Verificamos el comportamiento, esto no lo entiendo bien.
+    # Ademas de verificar la respuesta, verificamos también el comportamiento.
+    ## verificamos que esta función fue llamada y que el parametro usado fue "leo@messi.com" 
     uow.user_repository.get_by_email.assert_called_once_with("leo@messi.com")
+    ## verificamos que esta función fue llamada y que los parametros usados fueros especificamente "password_correcto" y "hashed_password_123" 
     hasher.verify_password.assert_called_once_with("password_correcto", "hashed_password_123")
-    # assert_called_once() solo verifica que la funcion haya sido llamada una vez sin importar los argumentos.
+    ## verificamos que esta función fue llamada, sin importar con que parametro. 
     token_provider.generate_token.assert_called_once()
-    # para validar que se ejecuto con los argumentos correctos usamos assert_called_once_with().
-    # pasamos el payload que se espera recibir.
+	## verificamos que esta función fue llamada y que el parametro usado fue "{"sub": "leo@messi.com"}".
     token_provider.generate_token.assert_called_once_with({"sub": "leo@messi.com"})
     
 
