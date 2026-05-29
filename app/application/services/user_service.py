@@ -18,6 +18,7 @@ class RegisterUserCommand(BaseModel):
     email: str
     password: str
 
+
 class RegisterUserUseCase:
     def __init__(self, uow: IUnitOfWork, hasher: PasswordHasherInterface):
         self.uow = uow
@@ -38,9 +39,11 @@ class RegisterUserUseCase:
         logger.info("user_created", name=user_saved.first_name, user_id=user_saved.id)
         return user_saved
 
+
 class LoginUserCommand(BaseModel):
     email: str
     password: str
+
 
 class AuthenticateUserUseCase:
     def __init__(self, uow: IUnitOfWork, hasher: PasswordHasherInterface, token_provider: ITokenProvider):
@@ -63,54 +66,76 @@ class AuthenticateUserUseCase:
             payload = {"sub": user.email}
             return self.token_provider.generate_token(payload)
 
+
 class ListUserUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, offset: int, limit: int) -> list[User]:
+    def execute(self, offset: int, limit: int, current_user: User) -> list[User]:
+        """
         with self.uow:
             users = self.uow.user_repository.get_all(offset, limit)
-        
-        logger.debug("users_listed", offset=offset, limit=limit)
-        return users
+        """
+        # Regular users are not allowed to list all users
+        logger.warning("unauthorized_user_list_attempt", user_id=current_user.id)
+        raise UnauthorizedException("You don't have permission to list users.")
+
 
 class GetUserUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, id: int) -> User:
+    def execute(self, id: int, current_user: User) -> User:
+        if id != current_user.id:
+            logger.warning("unauthorized_user_access_attempt", target_id=id, user_id=current_user.id)
+            raise UnauthorizedException("You don't have access to this resource.")
+
         with self.uow:
             user = self.uow.user_repository.get_by_id(id)
             if not user:
                 logger.warning("user_not_found", id=id)
-                raise ResourceNotFoundException("User ID:{id} doesn't exist.")
+                raise ResourceNotFoundException(f"User ID:{id} doesn't exist.")
             
         logger.debug("user_retrieved", id=id)    
         return user
+
 
 class UpdateUserUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, id: int, user: User) -> User:
+    def execute(self, id: int, user: User, current_user: User) -> User:
+        if id != current_user.id:
+            logger.warning("unauthorized_user_update_attempt", target_id=id, user_id=current_user.id)
+            raise UnauthorizedException("You don't have access to this resource.")
+
         with self.uow:
-            user_updated = self.uow.user_repository.update(id, user)
-            if not user_updated:
+            existing_user = self.uow.user_repository.get_by_id(id)
+            if not existing_user:
                 logger.warning("user_not_found", id=id)
-                return ResourceNotFoundException("User ID:{id} doesn't exist.")
+                raise ResourceNotFoundException(f"User ID:{id} doesn't exist.")
+
+            user_updated = self.uow.user_repository.update(id, user)
 
         logger.info("user_updated", name=user_updated.first_name, user_id=user_updated.id)
         return user_updated
+
 
 class DeleteUserUseCase:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow
 
-    def execute(self, id: int) -> None:
+    def execute(self, id: int, current_user: User) -> None:
+        if id != current_user.id:
+            logger.warning("unauthorized_user_delete_attempt", target_id=id, user_id=current_user.id)
+            raise UnauthorizedException("You don't have access to this resource.")
+
         with self.uow:
-            user = self.uow.user_repository.delete(id)
-            if not user:
+            existing_user = self.uow.user_repository.get_by_id(id)
+            if not existing_user:
                 logger.warning("user_not_found", id=id)
-                raise ResourceNotFoundException("User ID:{id} doesn't exist.")
+                raise ResourceNotFoundException(f"User ID:{id} doesn't exist.")
+                
+            self.uow.user_repository.delete(id)
 
         logger.info("user_deleted", id=id)

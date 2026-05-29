@@ -50,3 +50,9 @@ uv run alembic revision --autogenerate -m "<your-comment>"
 uv run alembic upgrade head
 ```
 > This create the database base of your project.
+
+## Future Improvements
+Here is a simple list of things we can improve in the future:
+- Admin Roles: Add an administrative role (e.g. `is_admin` or `role`) to the database and JWT token payload.
+- Admin Routes: Restrict user actions so regular users cannot list all users, but administrators can.
+- User Management: Build robust permission controls across all administrative routes.
