@@ -18,16 +18,17 @@ class AccountBase(SQLModel):
     amount: float = Field(ge=0, default=0.0)
     profit_percentage: float = Field(ge=0.0,default=0.0)
     currency: Currency = Field(default=Currency.COP)
-    user_id: int | None = Field(default=None, foreign_key="usertable.id")
 
 
 class AccountTable(AccountBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    user_id: int | None = Field(default=None, foreign_key="usertable.id")
     created_at: datetime = Field(default_factory=utc_now)
 
 
 class AccountPublic(AccountBase):
     id: int
+    user_id: int
     created_at: datetime
 
 

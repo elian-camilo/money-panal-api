@@ -11,4 +11,4 @@ class Debt(BaseModel):
     due_date: date | None = None
     is_settled: bool
     user_id: int | None = None
-    created_at: datetime
+    created_at: datetime | None = None

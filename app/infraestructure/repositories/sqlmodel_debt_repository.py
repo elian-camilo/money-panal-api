@@ -9,14 +9,15 @@ class SQLModelDebtRepository(DebtRepositoryInterface):
         self.session = session
 
     def save(self, debt: DebtEntity) -> DebtEntity:
-        debt_db = DebtTable.model_validate(debt)
+        data = debt.model_dump(exclude_none=True)
+        debt_db = DebtTable.model_validate(data)
         self.session.add(debt_db)
         self.session.flush()
         self.session.refresh(debt_db)
         return DebtEntity.model_validate(debt_db)
 
-    def get_all(self, offset: int, limit: int) -> list[DebtEntity]:
-        debt_db = self.session.exec(select(DebtTable).offset(offset).limit(limit)).all()
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[DebtEntity]:
+        debt_db = self.session.exec(select(DebtTable).where(DebtTable.user_id==user_id).offset(offset).limit(limit)).all()
         return [DebtEntity.model_validate(debt) for debt in debt_db]
 
     def get_by_id(self, id: int) -> DebtEntity:
@@ -29,7 +30,7 @@ class SQLModelDebtRepository(DebtRepositoryInterface):
         debt_db = self.session.get(DebtTable, id)
         if not debt_db:
             return None
-        debt_data = debt.model_dump()
+        debt_data = debt.model_dump(exclude_none=True, exclude={"id", "created_at", "user_id"})
         debt_db.sqlmodel_update(debt_data)
         self.session.flush()
         self.session.refresh(debt_db)

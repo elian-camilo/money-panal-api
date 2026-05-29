@@ -7,7 +7,7 @@ class DebtRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all(self, offset: int, limit: int) -> list[Debt]:
+    def get_all(self, offset: int, limit: int, user_id: int | None = None) -> list[Debt]:
         pass
 
     @abstractmethod
