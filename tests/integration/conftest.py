@@ -1,10 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine, StaticPool, text
+from sqlmodel import Session, SQLModel, create_engine, text
+from datetime import date
 from app.main import app
 from app.infraestructure.models.user import UserTable
 from app.infraestructure.models.category import CategoryTable
 from app.infraestructure.models.account import AccountTable
+from app.infraestructure.models.obligation import ObligationTable
 from app.domain.entities.user import User
 from app.infraestructure.database import get_session
 from app.presentation.api.dependencies import get_current_user
@@ -69,15 +71,28 @@ def seed_db_fixture(session: Session):
         description="Test Description", 
         user_id=1
     )
+    # 4. Crear Obligación
+    obligation = ObligationTable(
+        id=1,
+        name="Test Obligation",
+        description="Test Description",
+        amount=1500.0,
+        due_date=date(2027, 12, 31),
+        is_paid=False,
+        recurring=False,
+        user_id=1
+    )
     
     session.add(account)
     session.add(category)
+    session.add(obligation)
     session.commit()
 
     # Reset Postgres ID sequences after manual seeding of ID 1
     session.execute(text("SELECT setval(pg_get_serial_sequence('usertable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM usertable;"))
     session.execute(text("SELECT setval(pg_get_serial_sequence('accounttable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM accounttable;"))
     session.execute(text("SELECT setval(pg_get_serial_sequence('categorytable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM categorytable;"))
+    session.execute(text("SELECT setval(pg_get_serial_sequence('obligationtable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM obligationtable;"))
     session.commit()
 
 @pytest.fixture(autouse=True)

@@ -12,4 +12,4 @@ class Obligation(BaseModel):
     is_paid: bool
     recurring: bool
     user_id: int | None = None
-    created_at: datetime
+    created_at: datetime | None = None

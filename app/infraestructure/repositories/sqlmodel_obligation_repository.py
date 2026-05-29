@@ -8,14 +8,16 @@ class SQLModelObligationRepository(ObligationRepositoryInterface):
         self.session = session
 
     def save(self, obligation: ObligationEntity) -> ObligationEntity:
-        obligation_db = ObligationTable.model_validate(obligation)
+        obligation_db = ObligationTable.model_validate(obligation.model_dump(exclude_none=True))
         self.session.add(obligation_db)
         self.session.flush()
         self.session.refresh(obligation_db)
         return ObligationEntity.model_validate(obligation_db)
     
-    def get_all(self, offset: int, limit: int) -> list[ObligationEntity]:
-        obligation_db = self.session.exec(select(ObligationTable).offset(offset).limit(limit)).all()
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[ObligationEntity]:
+        obligation_db = self.session.exec(
+            select(ObligationTable).where(ObligationTable.user_id == user_id).offset(offset).limit(limit)
+        ).all()
         return [ObligationEntity.model_validate(obligation) for obligation in obligation_db]
     
     def get_by_id(self, id: int) -> ObligationEntity:
@@ -28,7 +30,7 @@ class SQLModelObligationRepository(ObligationRepositoryInterface):
         obligation_db = self.session.get(ObligationTable, id)
         if not obligation_db:
             return None
-        obligation_data = obligation.model_dump()
+        obligation_data = obligation.model_dump(exclude_none=True, exclude={"id", "created_at", "user_id"})
         obligation_db.sqlmodel_update(obligation_data)
         self.session.add(obligation_db)
         self.session.flush()
