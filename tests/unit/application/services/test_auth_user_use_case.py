@@ -5,13 +5,6 @@ from app.application.services.user_service import AuthenticateUserUseCase, Login
 from app.domain.entities.user import User
 from app.domain.exceptions import UnauthorizedException
 
-import pytest
-from unittest.mock import MagicMock
-
-from app.application.services.user_service import AuthenticateUserUseCase, LoginUserCommand
-from app.domain.entities.user import User
-from app.domain.exceptions import UnauthorizedException
-
 def test_authenticate_user_success():
     # 1. Creamos los mocks de las interfaces que necesita la construcción del user_service.
     uow = MagicMock()
