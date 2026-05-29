@@ -10,4 +10,4 @@ class Account(BaseModel):
     profit_percentage: float
     currency: str
     user_id: int | None = None
-    created_at: datetime
+    created_at: datetime | None = None

@@ -7,7 +7,7 @@ class AccountRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all(self, offset: int, limit: int) -> list[Account]:
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[Account]:
         pass
 
     @abstractmethod
