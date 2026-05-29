@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.user_service import (
@@ -26,6 +26,7 @@ router = APIRouter(prefix="/users")
 hasher = PasswordHasher()
 jwt_provider = JwtTokenProvider()
 
+
 @router.post("/login", tags=["auth"])
 def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):
     uow = UnitOfWork(session)
@@ -37,6 +38,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_
     )
     token = service.execute(command)
     return {"access_token": token, "token_type": "bearer"}
+
 
 @router.post("/", response_model=UserPublic, tags=["auth"])
 def register_user(user: UserCreate, session=Depends(get_session)):
@@ -50,28 +52,50 @@ def register_user(user: UserCreate, session=Depends(get_session)):
         password=user.password
     )
     return service.execute(command)
-    
+
+
 @router.get("/", response_model=list[UserPublic])
-def get_all_users(offset: int = 0, limit: int = 10, session=Depends(get_session), current_user: User = Depends(get_current_user)):
+def get_all_users(
+    offset: int = 0,
+    limit: int = 10,
+    current_user: User = Depends(get_current_user),
+    session=Depends(get_session)
+):
     uow = UnitOfWork(session)
     service = ListUserUseCase(uow=uow)
-    return service.execute(offset, limit)
-    
+    return service.execute(offset, limit, current_user)
+
+
 @router.get("/{id}", response_model=UserPublic)
-def get_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)):
+def get_user(
+    id: int,
+    current_user: User = Depends(get_current_user),
+    session=Depends(get_session)
+):
     uow = UnitOfWork(session)
     service = GetUserUseCase(uow=uow)
-    return service.execute(id)
-    
+    return service.execute(id, current_user)
+
+
 @router.put("/{id}", response_model=UserPublic)
-def update_user(id: int, user: UserCreate, session=Depends(get_session), current_user: User = Depends(get_current_user)):
+def update_user(
+    id: int,
+    user: UserCreate,
+    current_user: User = Depends(get_current_user),
+    session=Depends(get_session)
+):
     uow = UnitOfWork(session)
     service = UpdateUserUseCase(uow=uow)
-    return service.execute(id, user)
-    
+    return service.execute(id, user, current_user)
+
+
 @router.delete("/{id}")
-def delete_user(id: int, session=Depends(get_session), current_user: User = Depends(get_current_user)) -> dict:
+def delete_user(
+    id: int,
+    current_user: User = Depends(get_current_user),
+    session=Depends(get_session)
+) -> dict:
     uow = UnitOfWork(session)
     service = DeleteUserUseCase(uow=uow)
-    service.execute(id)
+    service.execute(id, current_user)
     return {"status": "success", "message": "User deleted successfully", "deleted_id": id}

@@ -7,6 +7,7 @@ from app.infraestructure.models.user import UserTable
 from app.infraestructure.models.category import CategoryTable
 from app.infraestructure.models.account import AccountTable
 from app.infraestructure.models.obligation import ObligationTable
+from app.infraestructure.models.debt import DebtTable
 from app.domain.entities.user import User
 from app.infraestructure.database import get_session
 from app.presentation.api.dependencies import get_current_user
@@ -82,10 +83,21 @@ def seed_db_fixture(session: Session):
         recurring=False,
         user_id=1
     )
+    # 5. Create debt
+    debt = DebtTable(
+        id=1,
+        person_name="Ronaldo",
+        amount=50000,
+        type="lend",
+        due_date=date(2027, 12, 31),
+        is_settled=False,
+        user_id=1
+    )
     
     session.add(account)
     session.add(category)
     session.add(obligation)
+    session.add(debt)
     session.commit()
 
     # Reset Postgres ID sequences after manual seeding of ID 1
@@ -93,6 +105,7 @@ def seed_db_fixture(session: Session):
     session.execute(text("SELECT setval(pg_get_serial_sequence('accounttable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM accounttable;"))
     session.execute(text("SELECT setval(pg_get_serial_sequence('categorytable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM categorytable;"))
     session.execute(text("SELECT setval(pg_get_serial_sequence('obligationtable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM obligationtable;"))
+    session.execute(text("SELECT setval(pg_get_serial_sequence('debttable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM debttable;"))
     session.commit()
 
 @pytest.fixture(autouse=True)
