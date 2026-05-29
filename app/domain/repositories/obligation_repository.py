@@ -7,7 +7,7 @@ class ObligationRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all(self, offset: int, limit: int) -> list[Obligation]:
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[Obligation]:
         pass
 
     @abstractmethod

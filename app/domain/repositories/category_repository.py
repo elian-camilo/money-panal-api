@@ -7,7 +7,7 @@ class CategoryRespositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all(self, offset: int, limit: int) -> list[Category]:
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[Category]:
         pass
 
     @abstractmethod

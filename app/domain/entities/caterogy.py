@@ -8,5 +8,5 @@ class Category(BaseModel):
     name: str
     description: str | None = None
     user_id: int | None = None
-    created_at: datetime
+    created_at: datetime | None = None
     

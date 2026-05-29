@@ -19,16 +19,17 @@ class TransactionBase(SQLModel):
     description: str | None = Field(default=None, max_length=100)
     category_id: int | None = Field(default=None, foreign_key="categorytable.id")
     account_id: int | None = Field(default=None, foreign_key="accounttable.id")
-    user_id: int | None = Field(default=None, foreign_key="usertable.id")
 
 
 class TransactionTable(TransactionBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=utc_now)
+    user_id: int | None = Field(default=None, foreign_key="usertable.id")
+    created_at: datetime  = Field(default_factory=utc_now)
 
 
 class TransactionPublic(TransactionBase):
     id: int
+    user_id: int
     created_at: datetime
 
 

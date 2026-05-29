@@ -7,7 +7,7 @@ class TransactionRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all(self, offset: int, limit: int) -> list[Transaction]:
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[Transaction]:
         pass
 
     @abstractmethod

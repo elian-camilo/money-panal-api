@@ -7,7 +7,7 @@ def utc_now():
 
 class ObligationBase(SQLModel):
     name: str = Field(index=True, max_length=30)
-    description: str = Field(default=None, max_length=100)
+    description: str | None = Field(default=None, max_length=100)
     amount: float = Field(ge=0, default=0.0)
     due_date: date | None = Field(default=None)
     is_paid: bool = Field(default=False)

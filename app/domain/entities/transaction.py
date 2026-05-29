@@ -11,4 +11,4 @@ class Transaction(BaseModel):
     category_id: int | None = None
     account_id: int | None = None
     user_id: int | None = None
-    created_at: datetime
+    created_at: datetime | None = None
