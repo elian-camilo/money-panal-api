@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine, StaticPool
-
+from sqlmodel import Session, SQLModel, create_engine, StaticPool, text
 from app.main import app
 from app.infraestructure.models.user import UserTable
 from app.infraestructure.models.category import CategoryTable
@@ -73,6 +72,12 @@ def seed_db_fixture(session: Session):
     
     session.add(account)
     session.add(category)
+    session.commit()
+
+    # Reset Postgres ID sequences after manual seeding of ID 1
+    session.execute(text("SELECT setval(pg_get_serial_sequence('usertable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM usertable;"))
+    session.execute(text("SELECT setval(pg_get_serial_sequence('accounttable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM accounttable;"))
+    session.execute(text("SELECT setval(pg_get_serial_sequence('categorytable', 'id'), coalesce(max(id), 1), max(id) IS NOT null) FROM categorytable;"))
     session.commit()
 
 @pytest.fixture(autouse=True)

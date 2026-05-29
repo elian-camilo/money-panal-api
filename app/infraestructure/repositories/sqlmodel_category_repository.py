@@ -9,7 +9,8 @@ class SQLModelCategoryRespository(CategoryRespositoryInterface):
         self.session = session
 
     def save(self, category: CategoryEntity) -> CategoryEntity:
-        category_db = CategoryTable.model_validate(category)
+        data = category.model_dump(exclude_none=True)
+        category_db = CategoryTable.model_validate(data)
 
         self.session.add(category_db)
         self.session.flush()
@@ -17,8 +18,13 @@ class SQLModelCategoryRespository(CategoryRespositoryInterface):
 
         return CategoryEntity.model_validate(category_db)
     
-    def get_all(self, offset: int, limit: int) -> list[CategoryEntity]:
-        category_db = self.session.exec(select(CategoryTable).offset(offset).limit(limit)).all()
+    def get_all(self, offset: int, limit: int, user_id: int) -> list[CategoryEntity]:
+        category_db = self.session.exec(
+            select(CategoryTable)
+            .where(CategoryTable.user_id == user_id)
+            .offset(offset)
+            .limit(limit)
+        ).all()
         return [CategoryEntity.model_validate(category) for category in category_db]
     
     def get_by_id(self, id: int):
@@ -31,8 +37,9 @@ class SQLModelCategoryRespository(CategoryRespositoryInterface):
         category_db = self.session.get(CategoryTable, id)
         if not category_db:
             return None
-        category_data = category.model_dump()
-        category_db.sqlmodel_update(category_db)
+        # Persistencia defensiva: no sobreescribir user_id ni created_at
+        category_data = category.model_dump(exclude_none=True, exclude={"created_at", "user_id"})
+        category_db.sqlmodel_update(category_data)
 
         self.session.add(category_db)
         self.session.flush()
