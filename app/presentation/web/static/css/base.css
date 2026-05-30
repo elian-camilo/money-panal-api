@@ -1,0 +1,59 @@
+:root {
+  --bg-base: #fafafa;
+  --text-main: #33333a;
+  --honey-gold: #F4B41A;
+  --hive-dark: #2C3E50;
+  --hive-success: #2A9D8F; /* Income color */
+  --hive-danger: #E63946;  /* Expense color */
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-main);
+  padding-top: 70px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+}
+
+.main-color {
+  background-color: var(--hive-dark);
+}
+
+.text-accent {
+  color: var(--honey-gold);
+}
+
+.btn-accent, .btn-honey {
+  background-color: var(--honey-gold);
+  color: var(--text-main);
+  border: none;
+  font-weight: 500;
+}
+
+.btn-accent:hover, .btn-honey:hover {
+  background-color: #d19a12;
+  color: var(--text-main);
+}
+
+.strike-through-td {
+    text-decoration: line-through;
+}
+
+/* Custom Input Focus Override */
+.form-control:focus, .form-select:focus {
+  border-color: var(--honey-gold);
+  box-shadow: 0 0 0 0.25rem rgba(244, 180, 26, 0.25);
+}
+
+/* Transaction Types */
+.text-income {
+  color: var(--hive-success) !important;
+  font-weight: 600;
+}
+
+.text-expense {
+  color: var(--hive-danger) !important;
+  font-weight: 600;
+}

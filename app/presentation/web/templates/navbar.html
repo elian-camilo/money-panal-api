@@ -1,0 +1,46 @@
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark main-color fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                <img src="{{ url_for('static', path='/img/logo.svg') }}" alt="Money-panal Logo" width="35" height="35" class="d-inline-block align-text-top">
+                <span>Money-<span class="text-accent">panal</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if current_user %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'transaction' in request.url.path %}active{% endif %}" href="/transaction-page">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'debt' in request.url.path %}active{% endif %}" href="/debt-page">Debts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'obligation' in request.url.path %}active{% endif %}" href="/obligation-page">Obligations</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if current_user %}
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle text-light d-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear-fill"></i> Settings
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li><a class="dropdown-item" href="/account-page"><i class="bi bi-wallet2 me-2 text-muted"></i>Accounts</a></li>
+                            <li><a class="dropdown-item" href="/category-page"><i class="bi bi-tags me-2 text-muted"></i>Categories</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-sm btn-outline-light px-3" onclick="logout()">Logout</button>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
