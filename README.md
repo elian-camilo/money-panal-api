@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="app/presentation/web/static/img/logo.svg" alt="Money Panel Logo" width="150" height="150">
+</div>
+
 # Money Panel
 
 A minimalist personal finance manager built with Python, FastAPI, and Clean Architecture. 
@@ -5,6 +9,11 @@ A minimalist personal finance manager built with Python, FastAPI, and Clean Arch
 Money Panel allows you to track your income, expenses, debts, and financial obligations through a clean web interface powered by Jinja2 and Bootstrap 5, while maintaining a decoupled, production-ready REST API underneath.
 
 ## Features
+
+> 📸 **Screenshot:**
+> 
+> *Add a screenshot of your dashboard here.*
+> ![Money Panel Dashboard](app/presentation/web/static/img/screenshot.png)
 
 - **Clean Architecture**: Strict separation of concerns (Domain, Application, Infrastructure, Presentation).
 - **Dual Interface**: Fully functional JSON REST API (`/api/v1`) + Server-Side Rendered Web UI (`/web`).
