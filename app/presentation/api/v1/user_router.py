@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.user_service import (
@@ -28,20 +26,6 @@ router = APIRouter(prefix="/users")
 hasher = PasswordHasher()
 jwt_provider = JwtTokenProvider()
 
-templates = Jinja2Templates(directory="app/presentation/web/templates")
-router.mount("/static", StaticFiles(directory="app/presentation/web/static"), name="static")
-
-### Pages ###
-
-@router.get("/login-page")
-def render_login_page(request: Request):
-    return templates.TemplateResponse(request=request, name="login.html")
-
-@router.get("/register-page")
-def render_register_page(request: Request):
-    return templates.TemplateResponse(request=request, name="register.html")
-
-### Endpoints ###
 
 @router.post("/login", tags=["auth"])
 def login(form_data: OAuth2PasswordRequestForm = Depends(), session=Depends(get_session)):

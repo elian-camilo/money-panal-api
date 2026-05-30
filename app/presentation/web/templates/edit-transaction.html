@@ -1,0 +1,47 @@
+{% include 'layout.html' %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            Edit transaction
+        </div>
+        <div class="card-body">
+            <form id="editTransactionForm">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="text" class="form-control" name="amount" value="{{transaction.amount}}" required>
+                </div>
+                <div class="form-group">
+                    <label>Transaction type</label>
+                    <select class="form-control" name="t_type" required>
+                        <option value="income" {% if transaction.t_type == 'income' %}selected{% endif %}>Income</option>
+                        <option value="expense" {% if transaction.t_type == 'expense' %}selected{% endif %}>Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control" rows="3" name="description" required>{{transaction.description}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control" name="category_id" required>
+                        {% for category in categories %}
+                        <option value="{{category.id}}" {% if transaction.category_id == category.id %}selected{% endif %}>{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Account</label>
+                    <select class="form-control" name="account_id" required>
+                        {% for account in accounts %}
+                        <option value="{{account.id}}" {% if transaction.account_id == account.id %}selected{% endif %}>{{account.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="button" id="deleteTransactionButton" class="btn btn-danger">Delete</button>
+                <a href="/transaction-page" class="btn btn-success">Back</a>
+            </form>
+        </div>
+    </div>
+</div>

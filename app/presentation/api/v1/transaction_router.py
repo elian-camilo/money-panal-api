@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.infraestructure.unit_of_work import UnitOfWork
 from app.application.services.transaction_service import CreateTransactionUseCase, GetTransactionUseCase, ListTransactionUseCase, UpdateTransactionUseCase, DeleteTransactionUseCase
 from app.infraestructure.database import get_session
@@ -7,6 +7,7 @@ from app.infraestructure.models.transaction import TransactionPublic, Transactio
 from app.domain.entities.transaction import Transaction
 
 router = APIRouter(prefix="/transactions", dependencies=[Depends(get_current_user)])
+
 
 @router.post("/", response_model=TransactionPublic)
 def create_transaction(transaction: TransactionCreate, session=Depends(get_session), current_user=Depends(get_current_user)):

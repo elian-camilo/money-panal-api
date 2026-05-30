@@ -1,0 +1,46 @@
+{% include 'layout.html' %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            Make a new transaction
+        </div>
+        <div class="card-body">
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="text" class="form-control" name="amount" required>
+                </div>
+                <div class="form-group">
+                    <label>Transaction type</label>
+                    <select class="form-control" name="t_type" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control" rows="3" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control" name="category_id" required>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Account</label>
+                    <select class="form-control" name="account_id" required>
+                        {% for account in accounts %}
+                        <option value="{{account.id}}">{{account.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add new transaction</button>
+                <a href="/transaction-page" class="btn btn-success">Back</a>
+            </form>
+        </div>
+    </div>
+</div>
