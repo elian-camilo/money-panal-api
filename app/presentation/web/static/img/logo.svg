@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4B41A" />
+      <stop offset="100%" stop-color="#D49A10" />
+    </linearGradient>
+  </defs>
+
+  <g stroke="#FFFFFF" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <polygon points="39.6,15 50,21 50,33 39.6,39 29.2,33 29.2,21" />
+    <polygon points="60.4,15 70.8,21 70.8,33 60.4,39 50,33 50,21" />
+    <polygon points="70.8,33 81.2,39 81.2,51 70.8,57 60.4,51 60.4,39" />
+    <polygon points="60.4,51 70.8,57 70.8,69 60.4,75 50,69 50,57" />
+    <polygon points="39.6,51 50,57 50,69 39.6,75 29.2,69 29.2,57" />
+    <polygon points="50,33 60.4,39 60.4,51 50,57 39.6,51 39.6,39" />
+    <polygon points="29.2,33 39.6,39 39.6,51 29.2,57 18.8,51 18.8,39" 
+             transform="translate(-6, 14) rotate(-10 29.2 45)" />
+  </g>
+
+  <g transform="translate(5, -1)">
+    
+    <g stroke="#2C3E50" stroke-width="3.5" stroke-linejoin="round" fill="none">
+      <polygon points="39.6,15 50,21 50,33 39.6,39 29.2,33 29.2,21" />
+      <polygon points="60.4,15 70.8,21 70.8,33 60.4,39 50,33 50,21" />
+      <polygon points="70.8,33 81.2,39 81.2,51 70.8,57 60.4,51 60.4,39" />
+      <polygon points="60.4,51 70.8,57 70.8,69 60.4,75 50,69 50,57" />
+      <polygon points="39.6,51 50,57 50,69 39.6,75 29.2,69 29.2,57" />
+      <polygon points="50,33 60.4,39 60.4,51 50,57 39.6,51 39.6,39" fill="url(#goldGradient)" />
+    </g>
+
+    <polygon points="29.2,33 39.6,39 39.6,51 29.2,57 18.8,51 18.8,39" 
+             fill="url(#goldGradient)" stroke="#2C3E50" stroke-width="3.5" stroke-linejoin="round"
+             transform="translate(-6, 14) rotate(-10 29.2 45)" />
+             
+  </g>
+</svg>

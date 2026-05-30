@@ -1,43 +1,48 @@
-{% include 'layout.html' %}
+{% extends 'layout.html' %}
 
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            Register
-        </div>
-        <div class="card-body">
-            <form id="registerForm">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>First Name</label>
-                        <input type="text" class="form-control" name="first_name" required>
+{% block content %}
+<div class="container min-vh-100 d-flex justify-content-center align-items-center mt-n5">
+    <div class="card shadow-sm border-0 w-100 mt-5" style="max-width: 500px; border-top: 4px solid var(--honey-gold) !important;">
+        <div class="card-body p-4 p-md-5 text-center">
+            <img src="{{ url_for('static', path='/img/logo.svg') }}" alt="Money-panal Logo" width="80" height="80" class="mb-3">
+            <h3 class="mb-4 fw-bold">Create Account</h3>
+            <form id="registerForm" class="text-start">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="John" required>
+                            <label for="first_name">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Doe" required>
+                            <label for="last_name">Last Name</label>
+                        </div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Last Name</label>
-                        <input type="text" class="form-control" name="last_name" required>
-                    </div>
+
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" autocomplete="email" required>
+                    <label for="email">Email address</label>
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="email" required>
-                    </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
+                    <label for="password">Password</label>
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" name="password" autocomplete="new-password" required>
+
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password" autocomplete="new-password" required>
+                    <label for="password2">Verify Password</label>
                 </div>
-                <div class="form-group">
-                    <label>Verify Password</label>
-                    <input type="password" class="form-control" name="password2" autocomplete="new-password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Sign in</button>
+
+                <button type="submit" class="btn btn-honey w-100 py-2 shadow-sm">Sign Up</button>
             </form>
-        </div>
-        <div class="card-footer text-muted">
-            <a href="/login-page"> Already have an account? </a>
+            <div class="text-center mt-4">
+                <a href="/login-page" class="text-decoration-none text-muted">Already have an account? Log in</a>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}

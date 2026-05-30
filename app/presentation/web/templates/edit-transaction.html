@@ -1,47 +1,73 @@
-{% include 'layout.html' %}
+{% extends 'layout.html' %}
 
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            Edit transaction
-        </div>
-        <div class="card-body">
-            <form id="editTransactionForm">
-                <div class="form-group">
-                    <label>Amount</label>
-                    <input type="text" class="form-control" name="amount" value="{{transaction.amount}}" required>
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <h2 class="mb-0 fw-bold">Edit Transaction</h2>
+                <a href="/transaction-page" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form id="editTransactionForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{transaction.amount}}" placeholder="0.00" required>
+                                    <label for="amount">Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="t_type" name="t_type" required>
+                                        <option value="income" {% if transaction.t_type == 'income' %}selected{% endif %}>Income</option>
+                                        <option value="expense" {% if transaction.t_type == 'expense' %}selected{% endif %}>Expense</option>
+                                    </select>
+                                    <label for="t_type">Transaction Type</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="category_id" name="category_id" required>
+                                        {% for category in categories %}
+                                        <option value="{{category.id}}" {% if transaction.category_id == category.id %}selected{% endif %}>{{category.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="category_id">Category</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="account_id" name="account_id" required>
+                                        {% for account in accounts %}
+                                        <option value="{{account.id}}" {% if transaction.account_id == account.id %}selected{% endif %}>{{account.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="account_id">Account</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="description" name="description" placeholder="Details" style="height: 100px" required>{{transaction.description}}</textarea>
+                                    <label for="description">Description</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-4 d-flex justify-content-between">
+                                <button type="button" id="deleteTransactionButton" class="btn btn-outline-danger px-4 py-2 shadow-sm">Delete</button>
+                                <button type="submit" class="btn btn-honey px-4 py-2 shadow-sm">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label>Transaction type</label>
-                    <select class="form-control" name="t_type" required>
-                        <option value="income" {% if transaction.t_type == 'income' %}selected{% endif %}>Income</option>
-                        <option value="expense" {% if transaction.t_type == 'expense' %}selected{% endif %}>Expense</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea class="form-control" rows="3" name="description" required>{{transaction.description}}</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select class="form-control" name="category_id" required>
-                        {% for category in categories %}
-                        <option value="{{category.id}}" {% if transaction.category_id == category.id %}selected{% endif %}>{{category.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Account</label>
-                    <select class="form-control" name="account_id" required>
-                        {% for account in accounts %}
-                        <option value="{{account.id}}" {% if transaction.account_id == account.id %}selected{% endif %}>{{account.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Save changes</button>
-                <button type="button" id="deleteTransactionButton" class="btn btn-danger">Delete</button>
-                <a href="/transaction-page" class="btn btn-success">Back</a>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}

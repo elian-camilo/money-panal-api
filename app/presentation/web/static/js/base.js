@@ -243,3 +243,31 @@
         // Redirect to the login page
         window.location.href = '/login-page';
     };
+
+    // Global function to delete a transaction from anywhere
+    async function deleteTransaction(transactionId) {
+        if (!confirm("Are you sure you want to delete this transaction?")) return;
+
+        try {
+            const token = getCookie('access_token');
+            if (!token) throw new Error('Authentication token not found');
+
+            const response = await fetch(`/api/v1/transactions/${transactionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                // Reload the page to show the updated list
+                window.location.reload();
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.detail}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
